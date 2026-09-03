@@ -55,43 +55,12 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 
 ---
 
+
 ## 🏗️ Architecture
-Client Request
-│
-▼
-┌─────────────────────────┐
-│ FastAPI (GCP Cloud │
-│ Run — us-central1) │
-└─────────────────────────┘
-│
-▼
-┌─────────────────────────┐
-│ Feature Engineering │
-│ • Log transform │
-│ • Z-score │
-│ • Missing value flags │
-└─────────────────────────┘
-│
-▼
-┌─────────────────────────┐
-│ XGBoost Model │
-│ AUC: 0.917 │
-│ Threshold: 0.6 │
-└─────────────────────────┘
-│
-▼
-┌─────────────────────────┐
-│ Response │
-│ • Fraud probability │
-│ • Risk level │
-│ • Latency <4ms │
-└─────────────────────────┘
-│
-▼
-┌─────────────────────────┐
-│ PostgreSQL │
-│ Predictions log │
-└─────────────────────────┘
+
+**Request Flow:**
+
+`Client` → `FastAPI (GCP Cloud Run)` → `Feature Engineering` → `XGBoost Model (AUC 0.917)` → `Response (<4ms)` → `PostgreSQL (log)`
 
 ---
 
@@ -171,30 +140,22 @@ FastAPI → Docker → GCP Cloud Run
 
 ---
 
+
 ## 📁 Project Structure
-fraud-shield/
-├── src/
-│ ├── data/
-│ │ ├── loader.py # Generator-based data loading
-│ │ ├── database.py # PostgreSQL connection
-│ │ └── schema.py # FraudTransaction dataclass
-│ ├── features/
-│ │ └── engineer.py # sklearn-style feature pipeline
-│ ├── models/
-│ │ ├── train.py # XGBoost training + MLflow
-│ │ ├── tune.py # Hyperparameter tuning
-│ │ └── neural_net.py # PyTorch neural network
-│ ├── api/
-│ │ └── endpoints.py # FastAPI app
-│ └── utils/
-│ └── decorators.py # @timer, @validate, @log_step
-├── configs/
-│ └── config.py # Dataclass-based config
-├── notebooks/
-│ └── eda_fraud_patterns.py
-├── Dockerfile
-├── requirements.txt
-└── README.md
+
+| Path | Description |
+|------|-------------|
+| `src/data/loader.py` | Generator-based data loading (590K rows) |
+| `src/data/database.py` | PostgreSQL connection |
+| `src/data/schema.py` | FraudTransaction dataclass + validation |
+| `src/features/engineer.py` | sklearn-style feature pipeline |
+| `src/models/train.py` | XGBoost training + MLflow tracking |
+| `src/models/tune.py` | Hyperparameter tuning (3 experiments) |
+| `src/models/neural_net.py` | PyTorch neural network |
+| `src/api/endpoints.py` | FastAPI — /predict, /health, /stats |
+| `src/utils/decorators.py` | @timer, @validate_dataframe, @log_step |
+| `configs/config.py` | Dataclass-based config management |
+| `Dockerfile` | Container definition (linux/amd64) |
 
 ---
 
