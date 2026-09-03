@@ -65,41 +65,19 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 ---
 
 ## 🔬 ML Pipeline
-IEEE-CIS Dataset (590,540 transactions)
-│
-▼
-Exploratory Analysis (SQL + PostgreSQL)
-• Product C: 77.59% fraud rate
-• High value (>$500): distinct pattern
-• Identity missing = fraud signal
-│
-▼
-Feature Engineering (sklearn-style pipeline)
-• Log transform — skewed amount normalize
-• Z-score — outlier detection
-• Amount bucketing — range patterns
-• Missing value flags — fraud signal
-• Categorical encoding
-│
-▼
-SMOTE — Imbalanced Data Fix
-• Original: 3.5% fraud / 96.5% legit
-• After: balanced training set
-│
-▼
-Model Training + MLflow Tracking
-• XGBoost baseline → AUC 0.912
-• XGBoost high-recall → AUC 0.912, Recall 0.949
-• XGBoost deep-trees → AUC 0.917 ✓ BEST
-• PyTorch Neural Net → AUC 0.844
-│
-▼
-Threshold Tuning
-• Default 0.5 → F1: 0.831
-• Optimal 0.6 → F1: 0.847 ✓
-│
-▼
-FastAPI → Docker → GCP Cloud Run
+
+| Step | Details |
+|------|---------|
+| **Dataset** | IEEE-CIS — 590,540 real transactions |
+| **EDA (SQL)** | Product C: 77.59% fraud rate, High value (>$500): distinct pattern |
+| **Feature Engineering** | Log transform, Z-score, Amount bucketing, Missing value flags, Categorical encoding |
+| **Imbalanced Data** | SMOTE — Original: 3.5% fraud → Balanced training set |
+| **XGBoost baseline** | AUC 0.912 |
+| **XGBoost high-recall** | AUC 0.912, Recall 0.949 |
+| **XGBoost deep-trees** | AUC 0.917 ✓ BEST |
+| **PyTorch Neural Net** | AUC 0.844 |
+| **Threshold Tuning** | Default 0.5 → F1: 0.831 \| Optimal 0.6 → F1: 0.847 ✓ |
+| **Deployment** | FastAPI → Docker → GCP Cloud Run |
 
 ---
 
