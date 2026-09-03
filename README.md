@@ -56,10 +56,81 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 ---
 
 ## 🏗️ Architecture
+Client Request
+│
+▼
+┌─────────────────────────┐
+│ FastAPI (GCP Cloud │
+│ Run — us-central1) │
+└─────────────────────────┘
+│
+▼
+┌─────────────────────────┐
+│ Feature Engineering │
+│ • Log transform │
+│ • Z-score │
+│ • Missing value flags │
+└─────────────────────────┘
+│
+▼
+┌─────────────────────────┐
+│ XGBoost Model │
+│ AUC: 0.917 │
+│ Threshold: 0.6 │
+└─────────────────────────┘
+│
+▼
+┌─────────────────────────┐
+│ Response │
+│ • Fraud probability │
+│ • Risk level │
+│ • Latency <4ms │
+└─────────────────────────┘
+│
+▼
+┌─────────────────────────┐
+│ PostgreSQL │
+│ Predictions log │
+└─────────────────────────┘
 
 ---
 
 ## 🔬 ML Pipeline
+IEEE-CIS Dataset (590,540 transactions)
+│
+▼
+Exploratory Analysis (SQL + PostgreSQL)
+• Product C: 77.59% fraud rate
+• High value (>$500): distinct pattern
+• Identity missing = fraud signal
+│
+▼
+Feature Engineering (sklearn-style pipeline)
+• Log transform — skewed amount normalize
+• Z-score — outlier detection
+• Amount bucketing — range patterns
+• Missing value flags — fraud signal
+• Categorical encoding
+│
+▼
+SMOTE — Imbalanced Data Fix
+• Original: 3.5% fraud / 96.5% legit
+• After: balanced training set
+│
+▼
+Model Training + MLflow Tracking
+• XGBoost baseline → AUC 0.912
+• XGBoost high-recall → AUC 0.912, Recall 0.949
+• XGBoost deep-trees → AUC 0.917 ✓ BEST
+• PyTorch Neural Net → AUC 0.844
+│
+▼
+Threshold Tuning
+• Default 0.5 → F1: 0.831
+• Optimal 0.6 → F1: 0.847 ✓
+│
+▼
+FastAPI → Docker → GCP Cloud Run
 
 ---
 
@@ -96,11 +167,34 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 2. **Imbalanced data** (3.5% fraud) requires SMOTE + class weights
 3. **Threshold tuning** (0.5→0.6) improved F1 from 0.831 to 0.847
 4. **Feature V70** most important — anonymous transaction velocity feature
-5. **Product C** has 77.59% fraud rate — strongest signal
+5. **Product C** has 77.59% fraud rate — strongest categorical signal
 
 ---
 
 ## 📁 Project Structure
+fraud-shield/
+├── src/
+│ ├── data/
+│ │ ├── loader.py # Generator-based data loading
+│ │ ├── database.py # PostgreSQL connection
+│ │ └── schema.py # FraudTransaction dataclass
+│ ├── features/
+│ │ └── engineer.py # sklearn-style feature pipeline
+│ ├── models/
+│ │ ├── train.py # XGBoost training + MLflow
+│ │ ├── tune.py # Hyperparameter tuning
+│ │ └── neural_net.py # PyTorch neural network
+│ ├── api/
+│ │ └── endpoints.py # FastAPI app
+│ └── utils/
+│ └── decorators.py # @timer, @validate, @log_step
+├── configs/
+│ └── config.py # Dataclass-based config
+├── notebooks/
+│ └── eda_fraud_patterns.py
+├── Dockerfile
+├── requirements.txt
+└── README.md
 
 ---
 
@@ -111,4 +205,3 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 Building production ML systems while completing CS degree.
 
 [![GitHub](https://img.shields.io/badge/GitHub-43Nimra-black)](https://github.com/43Nimra)
-
