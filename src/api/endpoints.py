@@ -157,12 +157,15 @@ async def root():
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM predictions")
-    total = cursor.fetchone()[0]
-    cursor.close()
-    conn.close()
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM predictions")
+        total = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+    except:
+        total = 0
     return HealthResponse(
         status="healthy",
         model_loaded=model_service.model is not None,
