@@ -41,6 +41,29 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 ---
 
 
+
+## Testing the API
+
+### Quick Test (Browser)
+Open: https://fraud-shield-590785312612.us-central1.run.app/docs
+
+### curl
+```bash
+curl -X POST https://fraud-shield-590785312612.us-central1.run.app/predict \
+  -H "Content-Type: application/json" \
+  -d '{"transaction_id": "TXN001", "amount": 4500.00, "product_type": "C"}'
+```
+
+### Python
+```python
+import requests
+r = requests.post(
+    "https://fraud-shield-590785312612.us-central1.run.app/predict",
+    json={"transaction_id": "TXN001", "amount": 4500.00, "product_type": "C"}
+)
+print(r.json())
+```
+
 ## Model Performance Charts
 
 ### All Runs Comparison
