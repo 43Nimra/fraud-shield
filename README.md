@@ -40,6 +40,15 @@ Traditional rule-based systems miss **40%+** of fraud cases.
 
 ---
 
+
+## Model Performance Charts
+
+### All Runs Comparison
+![Model Comparison](docs/model_comparison.png)
+
+### XGBoost vs PyTorch
+![XGBoost vs PyTorch](docs/xgboost_vs_pytorch.png)
+
 ## 🎯 Results
 
 | Metric | Score |
